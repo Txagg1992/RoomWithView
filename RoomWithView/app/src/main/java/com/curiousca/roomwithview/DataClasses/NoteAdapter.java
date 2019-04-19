@@ -11,6 +11,10 @@ import android.widget.TextView;
 
 import com.curiousca.roomwithview.R;
 
+import java.text.DateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
 public class NoteAdapter extends ListAdapter<Note, NoteAdapter.NoteHolder> {
 
     //private List<Note> notes = new ArrayList<>();
@@ -41,6 +45,8 @@ public class NoteAdapter extends ListAdapter<Note, NoteAdapter.NoteHolder> {
         View itemView = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.note_item, viewGroup, false);
 
+
+
         return new NoteHolder(itemView);
     }
 
@@ -50,6 +56,7 @@ public class NoteAdapter extends ListAdapter<Note, NoteAdapter.NoteHolder> {
         noteHolder.textViewTitle.setText(currentNote.getTitle());
         noteHolder.textViewDescription.setText(currentNote.getDescription());
         noteHolder.textViewPriority.setText(String.valueOf(currentNote.getPriority()));
+        noteHolder.textViewDate.setText(currentNote.getDate());
     }
 
     public Note getNoteAt(int position) {
@@ -60,12 +67,16 @@ public class NoteAdapter extends ListAdapter<Note, NoteAdapter.NoteHolder> {
         private TextView textViewTitle;
         private TextView textViewDescription;
         private TextView textViewPriority;
+        private TextView textViewDate;
+
+
 
         public NoteHolder(View itemView) {
             super(itemView);
             textViewTitle = itemView.findViewById(R.id.text_view_title);
             textViewDescription = itemView.findViewById(R.id.text_view_description);
             textViewPriority = itemView.findViewById(R.id.text_view_priority);
+            textViewDate = itemView.findViewById(R.id.text_view_date);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

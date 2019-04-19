@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -17,6 +18,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.curiousca.roomwithview.DataClasses.Note;
@@ -36,6 +38,9 @@ public class MainActivity extends AppCompatActivity {
     public static final int ADD_NOTE_REQUEST = 1;
     public static final int EDIT_NOTE_REQUEST = 2;
 
+    private int removedItem = 0;
+    private Note removedCard;
+
     private NoteViewModel noteViewModel;
 
     @Override
@@ -54,9 +59,13 @@ public class MainActivity extends AppCompatActivity {
 
         animateBackground();
         buildRecyclerView();
+        setAdapter();
         initSwipeToDelete();
 
 
+    }
+
+    private void setAdapter() {
         adapter = new NoteAdapter();
         recyclerView.setAdapter(adapter);
 
@@ -79,9 +88,11 @@ public class MainActivity extends AppCompatActivity {
                 intent.putExtra(AddEditNoteActivity.EXTRA_TITLE, note.getTitle());
                 intent.putExtra(AddEditNoteActivity.EXTRA_DESCRIPTION, note.getDescription());
                 intent.putExtra(AddEditNoteActivity.EXTRA_PRIORITY, note.getPriority());
+                intent.putExtra(AddEditNoteActivity.EXTRA_DATE, note.getDate());
                 startActivityForResult(intent, EDIT_NOTE_REQUEST);
             }
         });
+
     }
 
     private void buildRecyclerView() {
@@ -106,6 +117,18 @@ public class MainActivity extends AppCompatActivity {
                 noteViewModel.delete(adapter.getNoteAt(viewHolder.getAdapterPosition()));
 
                 Toast.makeText(MainActivity.this, "Note Deleted", Toast.LENGTH_SHORT).show();
+                removedItem = viewHolder.getAdapterPosition();
+                removedCard = adapter.getNoteAt(viewHolder.getAdapterPosition());
+
+                Snackbar.make(viewHolder.itemView, "Note Deleted", Snackbar.LENGTH_LONG)
+                        .setAction("UNDO", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                //add back
+                                noteViewModel.insert(removedCard);
+                            }
+                        })
+                        .show();
             }
         }).attachToRecyclerView(recyclerView);
     }
@@ -133,8 +156,9 @@ public class MainActivity extends AppCompatActivity {
             String title = data.getStringExtra(AddEditNoteActivity.EXTRA_TITLE);
             String description = data.getStringExtra(AddEditNoteActivity.EXTRA_DESCRIPTION);
             int priority = data.getIntExtra(AddEditNoteActivity.EXTRA_PRIORITY, -1);
+            String date = data.getStringExtra(AddEditNoteActivity.EXTRA_DATE);
 
-            Note note = new Note(title, description, priority);
+            Note note = new Note(title, description, priority, date);
             noteViewModel.insert(note);
 
             Toast.makeText(this, "Note Saved", Toast.LENGTH_SHORT).show();
@@ -148,8 +172,9 @@ public class MainActivity extends AppCompatActivity {
             String title = data.getStringExtra(AddEditNoteActivity.EXTRA_TITLE);
             String description = data.getStringExtra(AddEditNoteActivity.EXTRA_DESCRIPTION);
             int priority = data.getIntExtra(AddEditNoteActivity.EXTRA_PRIORITY, -1);
+            String date = data.getStringExtra(AddEditNoteActivity.EXTRA_DATE);
 
-            Note note = new Note(title, description, priority);
+            Note note = new Note(title, description, priority, date);
             note.setId(id);
             noteViewModel.update(note);
 
