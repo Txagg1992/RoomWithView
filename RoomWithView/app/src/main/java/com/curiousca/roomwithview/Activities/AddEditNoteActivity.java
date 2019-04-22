@@ -60,7 +60,7 @@ public class AddEditNoteActivity extends AppCompatActivity {
             editTextTitle.setText(intent.getStringExtra(EXTRA_TITLE));
             editTextDescription.setText(intent.getStringExtra(EXTRA_DESCRIPTION));
             numberPickerPriority.setValue(intent.getIntExtra(EXTRA_PRIORITY, 1));
-            textViewDate.setText(intent.getStringExtra(EXTRA_DATE));
+            textViewDate.setText(currentDate);
         } else {
             setTitle("Add Note");
         }
